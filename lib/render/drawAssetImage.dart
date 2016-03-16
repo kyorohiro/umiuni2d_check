@@ -1,26 +1,14 @@
 // following code is checked in 2016/03/16
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'dart:ui' as sky;
+
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 main() async {
   runApp(new DemoWidget());
-}
-
-AssetBundle getAssetBundle() =>
-  (rootBundle != null)? rootBundle:new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
-
-
-class ImageLoader {
-  static Future<sky.Image> load(String url) async {
-    AssetBundle bundle = getAssetBundle();
-    ImageResource resource = bundle.loadImage(url);
-    ImageInfo imgaeinfo = await resource.first;
-    return imgaeinfo.image;
-  }
 }
 
 class DemoWidget extends SingleChildRenderObjectWidget {
@@ -35,12 +23,10 @@ class DrawImageObject extends RenderConstrainedBox {
   double y = 50.0;
   sky.Image image = null;
 
-  void loadImage() {
+  loadImage() async {
     if (image == null) {
-      ImageLoader.load("assets/sample.jpeg").then((sky.Image img) {
-        image = img;
-        this.markNeedsPaint();
-      });
+      image = await ImageLoader.load("assets/sample.jpeg");
+      this.markNeedsPaint();
     }
   }
 
@@ -49,6 +35,7 @@ class DrawImageObject extends RenderConstrainedBox {
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
+
   @override
   void paint(PaintingContext context, Offset offset) {
     loadImage();
@@ -60,5 +47,17 @@ class DrawImageObject extends RenderConstrainedBox {
     } else {
       context.canvas.drawImage(image, point, paint);
     }
+  }
+
+}
+
+class ImageLoader {
+  static AssetBundle getAssetBundle() => (rootBundle != null) ? rootBundle : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
+  static Future<sky.Image> load(String url) async {
+    AssetBundle bundle = getAssetBundle();
+    ImageResource resource = bundle.loadImage(url);
+    ImageInfo imgaeinfo = await resource.first;
+    return imgaeinfo.image;
   }
 }
