@@ -45,7 +45,7 @@ class DemoWidget extends SingleChildRenderObjectWidget {
 class DemoRectObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
-  DemoRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+  DemoRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {;
   }
   @override
   bool hitTestSelf(Point position) => true;

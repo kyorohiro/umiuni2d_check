@@ -1,7 +1,6 @@
 // following code is checked in 2016/03/16
 
 import 'dart:async';
-import 'package:flutter/src/services/fetch.dart';
 import 'package:mojo/core.dart';
 import 'package:sky_services/media/media.mojom.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +21,7 @@ main() async {
 
 class SoundTest {
   MojoDataPipeConsumer data;
-  SoundTest(this.data) {}
+  SoundTest(this.data) {;}
 
   MediaServiceProxy service = new MediaServiceProxy.unbound();
   MediaPlayerProxy player = new MediaPlayerProxy.unbound();

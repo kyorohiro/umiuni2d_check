@@ -1,10 +1,6 @@
 // following code is checked in 2016/03/16
 
-import 'dart:async';
-import 'dart:ui' as sky;
-
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 main() async {

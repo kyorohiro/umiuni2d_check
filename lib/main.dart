@@ -1,13 +1,14 @@
 // check 2016 3/16
 //  :: is not properly encoded on ios about japanese
 import 'dart:async';
-import 'package:flutter/src/services/fetch.dart';
 import 'package:mojo/core.dart';
 import 'package:sky_services/media/media.mojom.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 main() async {
+  //
+  //
   runApp(new Center(child: new Text("Sound Test")));
   MojoDataPipeConsumer data =
       await ResouceLoader.load("assets/bgm_maoudamashii_acoustic09.mp3");
@@ -22,7 +23,7 @@ main() async {
 
 class SoundTest {
   MojoDataPipeConsumer data;
-  SoundTest(this.data) {}
+  SoundTest(this.data) {;}
 
   MediaServiceProxy service = new MediaServiceProxy.unbound();
   MediaPlayerProxy player = new MediaPlayerProxy.unbound();

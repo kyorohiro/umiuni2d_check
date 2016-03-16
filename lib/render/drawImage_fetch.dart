@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'package:flutter/src/services/fetch.dart';
 import 'dart:ui' as sky;
-import 'dart:typed_data';
 
 main() async {
   runApp(new DemoWidget());
@@ -59,7 +58,7 @@ class ImageLoader {
   static Future<sky.Image> load(String url) async {
     UrlResponse response = await fetchUrl(url);
     if (response.body == null) {
-      throw "failed load ${url}";
+      throw {"message":"failed to load ${url}"};
     } else {
       // normally use following
       // import 'package:flutter/services.dart';
