@@ -4,18 +4,18 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 
 void main() {
-  runApp(new DrawRectWidget());
+  runApp(new DemoWidget());
 }
 
-class DrawRectWidget extends SingleChildRenderObjectWidget {
+class DemoWidget extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return new DrawRectObject();
+    return new DemoObject();
   }
 }
 
-class DrawRectObject extends RenderConstrainedBox {
-  DrawRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+class DemoObject extends RenderConstrainedBox {
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
     ;
   }
 

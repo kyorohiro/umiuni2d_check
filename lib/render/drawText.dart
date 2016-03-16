@@ -1,5 +1,5 @@
 // check 2016 3/16
-//  :: is not properly encoded on ios about japanese 
+//  :: is not properly encoded on ios about japanese
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
