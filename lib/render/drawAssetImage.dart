@@ -1,3 +1,5 @@
+// following code is checked in 2016/03/16
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
@@ -8,13 +10,9 @@ main() async {
   runApp(new DemoWidget());
 }
 
-AssetBundle getAssetBundle() {
-  if (rootBundle != null) {
-    return rootBundle;
-  } else {
-    return new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
-  }
-}
+AssetBundle getAssetBundle() =>
+  (rootBundle != null)? rootBundle:new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
 
 class ImageLoader {
   static Future<sky.Image> load(String url) async {

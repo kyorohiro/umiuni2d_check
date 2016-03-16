@@ -1,2 +1,5 @@
-name: late_wave_9115
+name: umiuni2d checked
 uses-material-design: true
+assets:
+  - assets/sample.jpeg
+  - assets/sample.png
