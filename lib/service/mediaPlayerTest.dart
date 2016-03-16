@@ -1,5 +1,5 @@
-// check 2016 3/16
-//  :: is not properly encoded on ios about japanese
+// following code is checked in 2016/03/16
+
 import 'dart:async';
 import 'package:flutter/src/services/fetch.dart';
 import 'package:mojo/core.dart';

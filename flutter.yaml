@@ -3,3 +3,4 @@ uses-material-design: true
 assets:
   - assets/sample.jpeg
   - assets/sample.png
+  - assets/bgm_maoudamashii_acoustic09.mp3
