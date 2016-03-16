@@ -81,10 +81,11 @@ class DemoObject extends RenderConstrainedBox {
   void clip(PaintingContext context) {
     Path path = new Path();
     path.moveTo(0.0, 0.0);
-    path.lineTo(10.0, 50.0);
-    path.lineTo(50.0, 60.0);
-    path.lineTo(40.0, 10.0);
+    path.lineTo(0.0, 25.0);
+    path.lineTo(25.0, 25.0);
+    path.lineTo(25.0, 0.0);
     path.close();
     context.canvas.clipPath(path);
+//    context.canvas.clipRect(new Rect.fromLTWH(10.0, 10.0, 10.0, 10.0));
   }
 }
