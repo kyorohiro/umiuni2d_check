@@ -7,11 +7,13 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 void main() {
-  runApp(new DrawRectWidget()..anime());
+  runApp(new DemoWidget()..anime());
 }
-class DrawRectWidget extends SingleChildRenderObjectWidget {
+
+class DemoWidget extends SingleChildRenderObjectWidget {
   double angle = 0.0;
-  DrawRectObject o = new DrawRectObject();
+  DemoRectObject o = new DemoRectObject();
+
   @override
   RenderObject createRenderObject(BuildContext context) {
     return o;
@@ -28,10 +30,10 @@ class DrawRectWidget extends SingleChildRenderObjectWidget {
   }
 }
 
-class DrawRectObject extends RenderConstrainedBox {
+class DemoRectObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
-  DrawRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+  DemoRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
     ;
   }
 
