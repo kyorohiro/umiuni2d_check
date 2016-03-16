@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'package:flutter/src/services/fetch.dart';
 import 'dart:ui' as sky;
+import 'dart:typed_data';
 
 main() async {
   runApp(new DemoWidget());
