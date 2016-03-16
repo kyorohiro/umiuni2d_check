@@ -14,11 +14,11 @@ main() async {
 class DemoWidget extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return new DrawImageObject();
+    return new DemoObject();
   }
 }
 
-class DrawImageObject extends RenderConstrainedBox {
+class DemoObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
   sky.Image image = null;
@@ -30,6 +30,9 @@ class DrawImageObject extends RenderConstrainedBox {
     }
   }
 
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+    ;
+  }
   @override
   bool hitTestSelf(Point position) => true;
 

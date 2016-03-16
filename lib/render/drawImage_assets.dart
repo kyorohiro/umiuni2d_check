@@ -14,15 +14,17 @@ main() async {
 class DemoWidget extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return new DrawImageObject();
+    return new DemoObject();
   }
 }
 
-class DrawImageObject extends RenderConstrainedBox {
+class DemoObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
   sky.Image image = null;
-
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+    ;
+  }
   loadImage() async {
     if (image == null) {
       image = await ImageLoader.load("assets/sample.jpeg");
