@@ -1,61 +1,117 @@
-//
 // following code is checked in 2016/01/13
-//
-
+// failed to draw vertex now!!
 import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'dart:io';
+import 'dart:ui' as sky;
 import 'dart:async';
+import 'dart:typed_data';
+import 'package:vector_math/vector_math_64.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
+sky.Image img = null;
 main() async {
-  runApp(new Center(child: new Text("Hello!!")));
-  await new Future.delayed(new Duration(seconds:1));
-
-  StringBuffer buffer = new StringBuffer();
-
-  PathServiceProxy pathServiceProxy = new PathServiceProxy.unbound();
-  shell.connectToService("dummy", pathServiceProxy);
-  PathServiceGetFilesDirResponseParams dirResponse = await pathServiceProxy.ptr.getFilesDir();
-  Directory dir = new Directory(dirResponse.path);
-
-
-  //
-  // create File
-  print("###${dir.path}/dummy.txt");
-  File f = new File("${dir.path}/dummy.txt");
-  try {
-    await f.create(recursive: true);
-    RandomAccessFile rfile = await f.open(mode:FileMode.WRITE);
-    await rfile.writeString("hello!!");
-    rfile.close();
-  } catch(e) {
-    print("${e}");
-  }
-
-  // permission
-  // https://github.com/dart-lang/sdk/issues/15078
-  // https://github.com/dart-lang/sdk/issues/22036
-  // (await f.stat()).mode = 777;
-  Permission.chmod(777, f);
-
-  // list
-  await for(FileSystemEntity fse in dir.list()) {
-    print("${fse} ${(await fse.stat()).modeString()} ${(await fse.stat()).modified}");
-    buffer.write("${fse} ${(await fse.stat()).modeString()} ${(await fse.stat()).modified}\n");
-  }
-
-  Text t = new Text("${buffer.toString()}");
-  Center c = new Center(child: t);
-  runApp(c);
-  pathServiceProxy.close();
+  // "assets/icon.jpeg" is error 2015/12/13 's flutter, when draw image
+  img = await ImageLoader.load("assets/sample.png");
+  runApp(new DrawVertexsWidget());
 }
 
-class Permission {
-  // http://stackoverflow.com/questions/27494933/create-write-a-file-which-is-having-execute-permission
-  static chmod(int mode, File f) {
-    ProcessResult result =
-    Process.runSync(
-      "chmod",["${mode}", "${f.absolute.path}"]);
-    return result.exitCode;
+class DrawVertexsWidget extends SingleChildRenderObjectWidget {
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return new DrawVertexsObject()..anime();
+  }
+}
+
+class DrawVertexsObject extends RenderConstrainedBox {
+  double angle = 0.0;
+  DrawVertexsObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+    ;
+  }
+
+  void anime() {
+    Scheduler.instance.addFrameCallback((Duration timeStamp) {
+      angle += math.PI / 90.0;
+      this.markNeedsPaint();
+      anime();
+    });
+  }
+
+  @override
+  bool hitTestSelf(Point position) => true;
+
+  @override
+  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    context.canvas.scale(4.0, 4.0);
+    context.canvas.translate(80.0, 80.0);
+    Matrix4 mat = new Matrix4.identity();
+    mat.rotateY(math.PI / 2.0 + angle);
+    mat.rotateX(angle);
+    drawSurface(context, offset, mat);
+    mat.rotateY(math.PI / 2.0);
+    drawSurface(context, offset, mat);
+    mat.rotateY(math.PI / 2.0);
+    drawSurface(context, offset, mat);
+    mat.rotateY(math.PI / 2.0);
+    drawSurface(context, offset, mat);
+    mat.rotateX(math.PI / 2.0);
+    drawSurface(context, offset, mat);
+    mat.rotateX(math.PI / 1.0);
+    drawSurface(context, offset, mat);
+  }
+
+  void drawSurface(PaintingContext context, Offset offset, Matrix4 mat) {
+    Paint paint = new Paint();
+    sky.VertexMode vertexMode = sky.VertexMode.triangleFan;
+    Vector3 vec1 = mat * new Vector3(-25.0, -25.0, -25.0);
+    Vector3 vec2 = mat * new Vector3(-25.0, 25.0, -25.0);
+    Vector3 vec3 = mat * new Vector3(25.0, 25.0, -25.0);
+    Vector3 vec4 = mat * new Vector3(25.0, -25.0, -25.0);
+    Vector3 normal = (vec1 - vec2).cross(vec1 - vec3);
+    if (normal.z < 0) {
+      return;
+    }
+    List<Point> vertices = [
+      new Point(vec1.x, vec1.y),
+      new Point(vec2.x, vec2.y),
+      new Point(vec3.x, vec3.y),
+      new Point(vec4.x, vec4.y)
+    ];
+    List<Point> textureCoordinates = [
+      new Point(0.0, 0.0),
+      new Point(0.0, 1.0 * img.height),
+      new Point(1.0 * img.width, 1.0 * img.height),
+      new Point(1.0 * img.width, 0.0)
+    ];
+    List<Color> colors = [
+      const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
+      const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
+      const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
+      const Color.fromARGB(0xaa, 0xff, 0xff, 0xff)
+    ];
+    sky.TransferMode transferMode = sky.TransferMode.color;
+    sky.TileMode tmx = sky.TileMode.clamp;
+    sky.TileMode tmy = sky.TileMode.clamp;
+    Float64List matrix4 = new Matrix4.identity().storage;
+    sky.ImageShader imgShader = new sky.ImageShader(img, tmx, tmy, matrix4);
+    paint.shader = imgShader;
+    List<int> indicies = [0, 1, 2, 3];
+    context.canvas.drawVertices(vertexMode, vertices, textureCoordinates,
+        colors, transferMode, indicies, paint);
+  }
+}
+
+class ImageLoader {
+  static AssetBundle getAssetBundle() => (rootBundle != null) ? rootBundle : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
+  static Future<sky.Image> load(String url) async {
+    AssetBundle bundle = getAssetBundle();
+    ImageResource resource = bundle.loadImage(url);
+    ImageInfo imgaeinfo = await resource.first;
+    return imgaeinfo.image;
   }
 }
