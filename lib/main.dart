@@ -1,37 +1,41 @@
-// check 2016 3/16
+// following code is checked in 2016/03/16
+// flutter: ">=0.0.15"
 import 'package:flutter/widgets.dart';
-import 'package:flutter/http.dart' as http;
-import 'dart:async';
+import 'package:flutter/services.dart';
+import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 
 main() async {
   runApp(new Center(child: new Text("Hello!!")));
-  // https unsupport
-  try {
-    print("#[A ok] #${await getTest('https://raw.githubusercontent.com/kyorohiro/hello_skyengine/master/SUMMARY.md')}");
-  } catch (e) {
-    print("#[A error] ${e}");
-  }
+  await new Future.delayed(new Duration(seconds: 1));
+  print("[--a---]");
+  StringBuffer buffer = new StringBuffer("[--b---]\n");
+  //try {
+    buffer.write("Directory.current = ${Directory.current} \n");
+  //} catch (e, t) {
+  //  print("[e1] ${e} ${t}");
+//  }
 
   try {
-    print("[B ok] ${await getTest('http://httpbin.org/get')}");
-  } catch (e) {
-    print("[B error] ${e}");
+    buffer.write("Directory.systemTemp = ${Directory.systemTemp} \n");
+  } catch (e, t) {
+    print("[e2] ${e} ${t}");
   }
-
   try {
-    print("[C ok] ${await postTest('http://httpbin.org/post', "hello!!")}");
-  } catch (e) {
-    print("[C error] ${e}");
+    buffer.write("Directory.systemTemp = ${new Directory("./").absolute} \n");
+  } catch (e, t) {
+    print("[e3] ${e} ${t}");
   }
-}
-
-Future<String> getTest(String uri) async {
-  http.Response resp = await http.get(Uri.parse(uri));
-  return resp.body;
-}
-
-Future<String> postTest(String uri, String message) async {
-  http.Response resp = await http.post(Uri.parse(uri), body:message);
-  return resp.body;
+  try {
+    PathServiceProxy pathServiceProxy = new PathServiceProxy.unbound();
+    shell.connectToService("dummy", pathServiceProxy);
+    buffer.write("PathService.getAppDataDir = ${await pathServiceProxy.ptr.getAppDataDir()} \n");
+    buffer.write("PathService.getCacheDir = ${await pathServiceProxy.ptr.getCacheDir()} \n");
+    buffer.write("PathService.getFileDir = ${await pathServiceProxy.ptr.getFilesDir()} \n");
+    pathServiceProxy.close();
+  } catch (e, t) {
+    print("[e4] ${e} ${t}");
+  }
+  print("${buffer.toString()}");
 }
