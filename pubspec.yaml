@@ -3,3 +3,4 @@ description: Create a new Flutter project.
 dependencies:
   flutter:
     path: /Users/kyorohiro/tools/git/flutter/packages/flutter
+  test: any
