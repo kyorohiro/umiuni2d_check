@@ -44,6 +44,7 @@ main() async {
     buffer.write("${fse} ${(await fse.stat()).modeString()} ${(await fse.stat()).modified}\n");
   }
 
+  print(buffer.toString());
   Text t = new Text("${buffer.toString()}");
   Center c = new Center(child: t);
   runApp(c);
