@@ -1,9 +1,5 @@
 // check 2016 3/16
 import 'package:flutter/widgets.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:test/test.dart' as test;
-import 'dart:ui';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
