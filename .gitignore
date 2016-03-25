@@ -4,6 +4,6 @@
 .packages
 .pub/
 build/
-ios/.generated/
+flutter_c/ios/.generated/
 packages
 pubspec.lock
