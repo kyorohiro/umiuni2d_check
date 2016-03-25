@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
 sky.Image img = null;
