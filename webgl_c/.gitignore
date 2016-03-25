@@ -1,13 +1,3 @@
-.DS_Store
-.atom/
-.idea
-.packages
-.pub/
-build/
-flutter_c/ios/.generated/
-packages
-pubspec.lock
-
 # Files and directories created by pub
 .packages
 .pub/
