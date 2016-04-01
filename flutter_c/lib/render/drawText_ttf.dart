@@ -38,7 +38,7 @@ class DemoObject extends RenderConstrainedBox {
       color: textColor
     );
     TextSpan testStyledSpan = new TextSpan(
-      text:"Hello Text!! こんにちは!!",
+      text:"Hello Text!! こんにちは!!\naa",
       style:textStyle);
     TextPainter textPainter = new TextPainter(
       testStyledSpan);
@@ -48,6 +48,9 @@ class DemoObject extends RenderConstrainedBox {
     textPainter.minHeight = constraints.minHeight;
     textPainter.maxHeight = constraints.maxHeight;
     textPainter.layout();
+
+    print("(w, t) : (${textPainter.width}, ${textPainter.height})");
+
     textPainter.paint(context.canvas, new sky.Offset(100.0, 100.0));
   }
 }
