@@ -2,6 +2,7 @@
 // flutter: ">=0.0.15"
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/src/services/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 

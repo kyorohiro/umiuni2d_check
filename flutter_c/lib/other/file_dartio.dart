@@ -6,15 +6,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/src/services/path_provider.dart';
 
 main() async {
-  runApp(new Center(child: new Text("Hello!!")));
-  await new Future.delayed(new Duration(seconds:1));
+  Text t = new Text("Hello");
+  Center c = new Center(child: t);
+  runApp(c);
+  //
+  PathProvider p;
+  await new Future.delayed(new Duration(seconds: 3));
 
+  print("-----001");
   StringBuffer buffer = new StringBuffer();
 
-
   Directory dir = await PathProvider.getApplicationDocumentsDirectory();
+  print("-----002");
 
   //
   // create File
@@ -22,10 +28,10 @@ main() async {
   File f = new File("${dir.path}/dummy.txt");
   try {
     await f.create(recursive: true);
-    RandomAccessFile rfile = await f.open(mode:FileMode.WRITE);
+    RandomAccessFile rfile = await f.open(mode: FileMode.WRITE);
     await rfile.writeString("hello!!");
     rfile.close();
-  } catch(e) {
+  } catch (e) {
     print("${e}");
   }
 
@@ -36,23 +42,18 @@ main() async {
   Permission.chmod(777, f);
 
   // list
-  await for(FileSystemEntity fse in dir.list()) {
+  await for (FileSystemEntity fse in dir.list()) {
     print("${fse} ${(await fse.stat()).modeString()} ${(await fse.stat()).modified}");
     buffer.write("${fse} ${(await fse.stat()).modeString()} ${(await fse.stat()).modified}\n");
   }
 
   print(buffer.toString());
-  Text t = new Text("${buffer.toString()}");
-  Center c = new Center(child: t);
-  runApp(c);
 }
 
 class Permission {
   // http://stackoverflow.com/questions/27494933/create-write-a-file-which-is-having-execute-permission
   static chmod(int mode, File f) {
-    ProcessResult result =
-    Process.runSync(
-      "chmod",["${mode}", "${f.absolute.path}"]);
+    ProcessResult result = Process.runSync("chmod", ["${mode}", "${f.absolute.path}"]);
     return result.exitCode;
   }
 }

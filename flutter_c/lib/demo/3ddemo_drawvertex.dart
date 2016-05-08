@@ -1,5 +1,4 @@
-// following code is checked in 2016/01/13
-// failed to draw vertex now!!
+// following code is checked in 2016/05/08
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
 sky.Image img = null;
@@ -32,7 +30,7 @@ class DrawVertexsObject extends RenderConstrainedBox {
   }
 
   void anime() {
-    SchedulerBinding.instance.addFrameCallback((Duration timeStamp) {
+    SchedulerBinding.instance.scheduleFrameCallback((Duration timeStamp) {
       angle += math.PI / 90.0;
       this.markNeedsPaint();
       anime();
@@ -43,7 +41,9 @@ class DrawVertexsObject extends RenderConstrainedBox {
   bool hitTestSelf(Point position) => true;
 
   @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
+  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+  }
+
   @override
   void paint(PaintingContext context, Offset offset) {
     context.canvas.scale(4.0, 4.0);

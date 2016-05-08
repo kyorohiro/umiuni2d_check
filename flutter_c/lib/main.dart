@@ -1,5 +1,4 @@
-// following code is checked in 2016/01/13
-// failed to draw vertex now!!
+// following code is checked in 2016/05/08
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
