@@ -22,7 +22,7 @@ class DemoWidget extends SingleChildRenderObjectWidget {
     //
     // 2016/1/13 add following code
     //  Scheduller == null situation
-    if(Scheduler.instance == null) {
+    if(SchedulerBinding.instance == null) {
       new Future.delayed(new Duration(seconds: 1)).then((_){
         anime();
       });
@@ -30,7 +30,7 @@ class DemoWidget extends SingleChildRenderObjectWidget {
     }
 
     //
-    Scheduler.instance.scheduleFrameCallback((Duration timeStamp) {
+    SchedulerBinding.instance.scheduleFrameCallback((Duration timeStamp) {
       print("${timeStamp.inMilliseconds-prevTimeStamp}");
       prevTimeStamp = timeStamp.inMilliseconds;
       o.x = 100 * math.cos(math.PI * angle / 180.0) + 100.0;

@@ -31,7 +31,7 @@ class DrawVertexsObject extends RenderConstrainedBox {
   }
 
   void anime() {
-    Scheduler.instance.addFrameCallback((Duration timeStamp) {
+    SchedulerBinding.instance.scheduleFrameCallback((Duration timeStamp) {
       angle += math.PI / 90.0;
       this.markNeedsPaint();
       anime();
@@ -42,7 +42,9 @@ class DrawVertexsObject extends RenderConstrainedBox {
   bool hitTestSelf(Point position) => true;
 
   @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
+  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
+  }
+
   @override
   void paint(PaintingContext context, Offset offset) {
     context.canvas.scale(4.0, 4.0);

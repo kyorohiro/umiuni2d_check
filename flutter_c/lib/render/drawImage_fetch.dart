@@ -3,7 +3,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
-import 'package:flutter/src/services/fetch.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/http.dart' as http;
 import 'dart:ui' as sky;
 
 main() async {
@@ -56,7 +57,7 @@ class DemoObject extends RenderConstrainedBox {
 
 class ImageLoader {
   static Future<sky.Image> load(String url) async {
-    UrlResponse response = await fetchUrl(url);
+    http.Response response = await http.get(url);
     if (response.body == null) {
       throw {"message":"failed to load ${url}"};
     } else {
@@ -65,7 +66,7 @@ class ImageLoader {
       // Future<ui.Image> decodeImageFromDataPipe(MojoDataPipeConsumer consumerHandle)
       // Future<ui.Image> decodeImageFromList(Uint8List list) {
       Completer<sky.Image> completer = new Completer();
-      sky.decodeImageFromDataPipe(response.body.handle.h, (sky.Image image) {
+      sky.decodeImageFromList(response.bodyBytes,(sky.Image image) {
         completer.complete(image);
       });
       return completer.future;

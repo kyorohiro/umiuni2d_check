@@ -13,11 +13,8 @@ main() async {
 
   StringBuffer buffer = new StringBuffer();
 
-  PathServiceProxy pathServiceProxy = new PathServiceProxy.unbound();
-  shell.connectToService("dummy", pathServiceProxy);
-  PathServiceGetFilesDirResponseParams dirResponse = await pathServiceProxy.ptr.getFilesDir();
-  Directory dir = new Directory(dirResponse.path);
 
+  Directory dir = await PathProvider.getApplicationDocumentsDirectory();
 
   //
   // create File
@@ -48,7 +45,6 @@ main() async {
   Text t = new Text("${buffer.toString()}");
   Center c = new Center(child: t);
   runApp(c);
-  pathServiceProxy.close();
 }
 
 class Permission {

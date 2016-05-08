@@ -32,7 +32,7 @@ class DrawVertexsObject extends RenderConstrainedBox {
   }
 
   void anime() {
-    Scheduler.instance.addFrameCallback((Duration timeStamp) {
+    SchedulerBinding.instance.addFrameCallback((Duration timeStamp) {
       angle += math.PI / 90.0;
       this.markNeedsPaint();
       anime();

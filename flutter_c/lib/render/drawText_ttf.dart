@@ -43,11 +43,7 @@ class DemoObject extends RenderConstrainedBox {
     TextPainter textPainter = new TextPainter(
       testStyledSpan);
 
-    textPainter.maxWidth = 200.0; //constraints.maxWidth;
-    textPainter.minWidth = 200.0; //constraints.minWidth;
-    textPainter.minHeight = constraints.minHeight;
-    textPainter.maxHeight = constraints.maxHeight;
-    textPainter.layout();
+    textPainter.layout(minWidth: 200.0, maxWidth: 200.0);
 
     print("(w, t) : (${textPainter.width}, ${textPainter.height})");
 
