@@ -34,7 +34,7 @@ class DemoObject extends RenderConstrainedBox {
     TextSpan testStyledSpan = new TextSpan(
       text:"Hello Text!! こんにちは!!",
       style:textStyle);
-    TextPainter textPainter = new TextPainter(
+    TextPainter textPainter = new TextPainter(text:
       testStyledSpan);
 
     textPainter.layout(minWidth: 200.0, maxWidth: 200.0);
