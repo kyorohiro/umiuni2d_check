@@ -9,43 +9,79 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:math' as math;
 
-sky.Image img = null;
 main() async {
   // "assets/icon.jpeg" is error 2015/12/13 's flutter, when draw image
-  img = await ImageLoader.load("assets/sample.png");
+  //img = await ImageLoader.load("assets/sample.jpeg");
   runApp(new DrawVertexsWidget());
 }
 
 class DrawVertexsWidget extends SingleChildRenderObjectWidget {
+  double angle = 0.0;
+  DrawVertexsObject o = new DrawVertexsObject();
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return new DrawVertexsObject()..anime();
+    return o;
   }
+
+
+
 }
 
 class DrawVertexsObject extends RenderConstrainedBox {
-  double angle = 0.0;
+  double x = 50.0;
+  double y = 50.0;
+  double angle = 1.0;
   DrawVertexsObject() : super(additionalConstraints: const BoxConstraints.expand()) {
     ;
   }
-
-  void anime() {
-    SchedulerBinding.instance.scheduleFrameCallback((Duration timeStamp) {
-      angle += math.PI / 90.0;
+  bool loading = false;
+  loadImage() async {
+    if (loading == false) {
+      loading =true;
+      //image = await ImageLoader.load("assets/sample.jpeg");
       this.markNeedsPaint();
+      anime();
+    }
+  }
+  int prevTimeStamp = 0;
+  void anime() {
+    //
+    // 2016/1/13 add following code
+    //  Scheduller == null situation
+    if(SchedulerBinding.instance == null) {
+      new Future.delayed(new Duration(seconds: 1)).then((_){
+        anime();
+      });
+      return;
+    }
+
+    //
+    SchedulerBinding.instance.scheduleFrameCallback((Duration timeStamp) {
+      print("${timeStamp.inMilliseconds-prevTimeStamp}");
+      prevTimeStamp = timeStamp.inMilliseconds;
+      angle+= 0.01;
+      markNeedsPaint();
       anime();
     });
   }
-
   @override
   bool hitTestSelf(Point position) => true;
 
   @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-  }
+  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    loadImage();
+    //Paint paint = new Paint()..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
+    //if (image == null) {
+    //  Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
+    //  context.canvas.drawRect(rect, paint);
+    //} else {
+      paintA(context, offset);
+    //}
+  }
+  void paintA(PaintingContext context, Offset offset) {
     context.canvas.scale(4.0, 4.0);
     context.canvas.translate(80.0, 80.0);
     Matrix4 mat = new Matrix4.identity();
@@ -62,6 +98,7 @@ class DrawVertexsObject extends RenderConstrainedBox {
     drawSurface(context, offset, mat);
     mat.rotateX(math.PI / 1.0);
     drawSurface(context, offset, mat);
+  //    angle+= math.PI / 90.0;
   }
 
   void drawSurface(PaintingContext context, Offset offset, Matrix4 mat) {
@@ -83,9 +120,9 @@ class DrawVertexsObject extends RenderConstrainedBox {
     ];
     List<Point> textureCoordinates = [
       new Point(0.0, 0.0),
-      new Point(0.0, 1.0 * img.height),
-      new Point(1.0 * img.width, 1.0 * img.height),
-      new Point(1.0 * img.width, 0.0)
+      new Point(0.0, 1.0),
+      new Point(1.0, 1.0 ),
+      new Point(1.0, 0.0)
     ];
     List<Color> colors = [
       const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
@@ -94,17 +131,17 @@ class DrawVertexsObject extends RenderConstrainedBox {
       const Color.fromARGB(0xaa, 0xff, 0xff, 0xff)
     ];
     sky.TransferMode transferMode = sky.TransferMode.color;
-    sky.TileMode tmx = sky.TileMode.clamp;
-    sky.TileMode tmy = sky.TileMode.clamp;
-    Float64List matrix4 = new Matrix4.identity().storage;
-    sky.ImageShader imgShader = new sky.ImageShader(img, tmx, tmy, matrix4);
-    paint.shader = imgShader;
+    //sky.TileMode tmx = sky.TileMode.clamp;
+    //sky.TileMode tmy = sky.TileMode.clamp;
+    //Float64List matrix4 = new Matrix4.identity().storage;
+    //sky.ImageShader imgShader = new sky.ImageShader(image, tmx, tmy, matrix4);
+    //paint.shader = imgShader;
     List<int> indicies = [0, 1, 2, 3];
     context.canvas.drawVertices(vertexMode, vertices, textureCoordinates,
         colors, transferMode, indicies, paint);
   }
 }
-
+/*
 class ImageLoader {
   static AssetBundle getAssetBundle() => (rootBundle != null) ? rootBundle : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
 
@@ -114,4 +151,4 @@ class ImageLoader {
     ImageInfo imgaeinfo = await resource.first;
     return imgaeinfo.image;
   }
-}
+}*/
