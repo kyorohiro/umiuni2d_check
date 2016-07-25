@@ -1,3 +1,6 @@
+move to https://github.com/umiuni2d/check_api_and_platform
+
+
 # umiuni2d_check
 
 ## LICENSE
