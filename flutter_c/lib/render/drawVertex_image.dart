@@ -72,12 +72,20 @@ class DemoObject extends RenderConstrainedBox {
 }
 
 class ImageLoader {
-  static AssetBundle getAssetBundle() => (rootBundle != null) ? rootBundle : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+  static AssetBundle getAssetBundle() => (rootBundle != null)
+      ? rootBundle
+      : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
 
   static Future<ui.Image> load(String url) async {
-    AssetBundle bundle = getAssetBundle();
-    ImageResource resource = bundle.loadImage(url);
-    ImageInfo imgaeinfo = await resource.first;
-    return imgaeinfo.image;
+    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
+    Completer<ui.Image> completer = new Completer<ui.Image>();
+    void listener(ImageInfo frame) {
+      final ui.Image image = frame.image;
+      completer.complete(image);
+      stream.removeListener(listener);
+    }
+    stream.addListener(listener);
+    return completer.future;
   }
 }

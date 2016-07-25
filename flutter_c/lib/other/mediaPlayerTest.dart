@@ -27,20 +27,24 @@ class SoundTest {
   MediaPlayerProxy player = new MediaPlayerProxy.unbound();
 
   init() async {
-    shell.connectToService(null, service);
-    service.ptr.createPlayer(player);
-    await player.ptr.prepare(data);
+    service = shell.connectToApplicationService(
+      'mojo:media_service', MediaService.connectToService
+    );
+    service.createPlayer(player);
+    await player.prepare(data,(bool ignored) {
+      //
+    });
   }
 
   play() async {
     print("start play");
-    player.ptr.seekTo(0);
-    player.ptr.start();
+    player.seekTo(0);
+    player.start();
     print("/start play");
   }
 
   pause() async {
-    player.ptr.pause();
+    player.pause();
   }
 }
 

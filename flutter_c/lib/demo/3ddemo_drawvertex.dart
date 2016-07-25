@@ -25,7 +25,8 @@ class DrawVertexsWidget extends SingleChildRenderObjectWidget {
 
 class DrawVertexsObject extends RenderConstrainedBox {
   double angle = 0.0;
-  DrawVertexsObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+  DrawVertexsObject()
+      : super(additionalConstraints: const BoxConstraints.expand()) {
     ;
   }
 
@@ -41,8 +42,7 @@ class DrawVertexsObject extends RenderConstrainedBox {
   bool hitTestSelf(Point position) => true;
 
   @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-  }
+  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -106,12 +106,20 @@ class DrawVertexsObject extends RenderConstrainedBox {
 }
 
 class ImageLoader {
-  static AssetBundle getAssetBundle() => (rootBundle != null) ? rootBundle : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+  static AssetBundle getAssetBundle() => (rootBundle != null)
+      ? rootBundle
+      : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
 
   static Future<sky.Image> load(String url) async {
-    AssetBundle bundle = getAssetBundle();
-    ImageResource resource = bundle.loadImage(url);
-    ImageInfo imgaeinfo = await resource.first;
-    return imgaeinfo.image;
+    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
+    Completer<sky.Image> completer = new Completer<sky.Image>();
+    void listener(ImageInfo frame) {
+      final sky.Image image = frame.image;
+      completer.complete(image);
+      stream.removeListener(listener);
+    }
+    stream.addListener(listener);
+    return completer.future;
   }
 }
