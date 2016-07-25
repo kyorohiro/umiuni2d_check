@@ -31,9 +31,12 @@ class SoundTest {
       'mojo:media_service', MediaService.connectToService
     );
     service.createPlayer(player);
-    await player.prepare(data,(bool ignored) {
+    Completer c = new Completer();
+    player.prepare(data,(bool ignored) {
       //
+      c.complete("");
     });
+    await c.future;
   }
 
   play() async {
