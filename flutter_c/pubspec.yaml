@@ -1,6 +1,19 @@
-name: late_wave_9115
+name: umiuni_check_flutter
 description: Create a new Flutter project.
 dependencies:
   flutter:
-    path: /Users/kyorohiro/tools/git/flutter/packages/flutter
+    sdk: flutter
+  cupertino_icons: ^0.1.0
   test: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/sample.jpeg
+    - assets/sample.png
+    - assets/bgm_maoudamashii_acoustic09.mp3
+    - assets/Aclonica.ttf
+  fonts:
+    - family: Aclonica
+      fonts:
+         - asset: assets/Aclonica.ttf
