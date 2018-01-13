@@ -1,4 +1,4 @@
-// following code is checked in 2016/03/16
+// following code is checked in 2018/01/13
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -23,7 +23,7 @@ class DemoObject extends RenderConstrainedBox {
     ;
   }
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
@@ -34,18 +34,18 @@ class DemoObject extends RenderConstrainedBox {
     if (entry is BoxHitTestEntry) {
       if (event is PointerDownEvent) {
         touchInfos[event.pointer] = new TouchInfo();
-        touchInfos[event.pointer].x = entry.localPosition.x;
-        touchInfos[event.pointer].y = entry.localPosition.y;
+        touchInfos[event.pointer].x = entry.localPosition.dx;
+        touchInfos[event.pointer].y = entry.localPosition.dy;
         touchInfos[event.pointer].pressure = event.pressure / event.pressureMax;
         print("${event.pressure} / ${event.pressureMax}");
         touchInfos[event.pointer].isTouch = true;
       } else if (event is PointerMoveEvent) {
-        touchInfos[event.pointer].x = event.position.x;
-        touchInfos[event.pointer].y = event.position.y;
+        touchInfos[event.pointer].x = event.position.dx;
+        touchInfos[event.pointer].y = event.position.dy;
         touchInfos[event.pointer].pressure = event.pressure / event.pressureMax;
       } else if (event is PointerUpEvent) {
-        touchInfos[event.pointer].x = event.position.x;
-        touchInfos[event.pointer].y = event.position.y;
+        touchInfos[event.pointer].x = event.position.dx;
+        touchInfos[event.pointer].y = event.position.dy;
         touchInfos[event.pointer].isTouch = false;
       } else if (event is PointerCancelEvent) {
         print("pointer cancel");

@@ -1,4 +1,4 @@
-// check 2016 3/16
+// check 2018 1/13
 //  :: is not properly encoded on ios about japanese
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
@@ -22,7 +22,7 @@ class DemoObject extends RenderConstrainedBox {
   }
 
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
@@ -32,10 +32,10 @@ class DemoObject extends RenderConstrainedBox {
     Color textColor = const Color.fromARGB(0xaa, 0xff, 0xaa, 0xaa);
     TextStyle textStyle = new TextStyle(fontSize: 50.0, color: textColor);
     TextSpan testStyledSpan = new TextSpan(
-      text:"Hello Text!! こんにちは!!",
-      style:textStyle);
+        text:"Hello Text!! こんにちは!!",
+        style:textStyle);
     TextPainter textPainter = new TextPainter(text:
-      testStyledSpan);
+    testStyledSpan, textDirection: sky.TextDirection.ltr);
 
     textPainter.layout(minWidth: 200.0, maxWidth: 200.0);
     textPainter.paint(context.canvas, new sky.Offset(100.0, 100.0));
