@@ -1,4 +1,4 @@
-// check 2016 3/16
+// check 2018 1/13
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
@@ -20,7 +20,7 @@ class DemoObject extends RenderConstrainedBox {
   }
 
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}

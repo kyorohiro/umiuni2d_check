@@ -1,5 +1,4 @@
-// check 2016 3/16
-//  :: is not properly encoded on ios about japanese
+// check 2018 1/13
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
@@ -17,12 +16,10 @@ class DemoWidget extends SingleChildRenderObjectWidget {
 }
 
 class DemoObject extends RenderConstrainedBox {
-  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
-    ;
-  }
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand());
 
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
@@ -61,8 +58,8 @@ class DemoObject extends RenderConstrainedBox {
 
   void paintWithLinearGradient(PaintingContext context) {
     Paint p = new Paint();
-    p.style = sky.PaintingStyle.strokeAndFill;
-    p.shader = new sky.Gradient.linear([new sky.Point(0.0, 0.0), new sky.Point(50.0, 60.0)], [const Color.fromARGB(0xaa, 0xff, 0x00, 0x00), const Color.fromARGB(0xaa, 0x00, 0x00, 0x00), const Color.fromARGB(0xaa, 0x00, 0x00, 0xff),], [0.0, 0.5, 1.0], sky.TileMode.clamp);
+    p.style = sky.PaintingStyle.fill;
+    p.shader = new sky.Gradient.linear(new sky.Offset(0.0, 0.0), new sky.Offset(50.0, 60.0), [const Color.fromARGB(0xaa, 0xff, 0x00, 0x00), const Color.fromARGB(0xaa, 0x00, 0x00, 0x00), const Color.fromARGB(0xaa, 0x00, 0x00, 0xff),], [0.0, 0.5, 1.0], sky.TileMode.clamp);
 
     Path path = new Path();
     path.moveTo(0.0, 0.0);

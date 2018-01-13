@@ -1,87 +1,66 @@
-// following code is checked in 2016/03/16
+// flutter: ">=0.0.15"
+// following code is checked in 2018/01/13
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:vector_math/vector_math_64.dart';
 
-import 'dart:async';
-import 'dart:ui' as sky;
+// ex 3:4 game screen
+double stageWidth = 800.0;
+double stageHeight = 600.0;
+ui.Rect stageSize = new ui.Rect.fromLTWH(0.0, 0.0, stageWidth, stageHeight);
 
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+ui.Scene createScene(ui.Picture picture) {
+  print("#ZZ# ${ui.window.physicalSize.width} ${ui.window.physicalSize.height} ${ui.window.devicePixelRatio}");
+  double widthPaddingless  = ui.window.physicalSize.width-ui.window.padding.left-ui.window.padding.right;
+  double heightPaddingless = ui.window.physicalSize.height-ui.window.padding.top-ui.window.padding.bottom;
+  double rw = widthPaddingless/stageWidth;
+  double rh = heightPaddingless/stageHeight;
+  double stageRatio = (rw<rh?rw:rh);
 
-main() async {
-  runApp(new DemoWidget());
+  double t = ui.window.padding.top;
+  double l = ui.window.padding.left + (widthPaddingless-stageWidth*stageRatio)/2.0;
+
+
+
+  Matrix4 mat = new Matrix4.identity();
+  mat.translate(l, t);
+  mat.scale(stageRatio, stageRatio, 1.0);
+
+  ui.SceneBuilder sceneBuilder = new ui.SceneBuilder();//(sceneBounds);
+//  sceneBuilder.pushTransform(matrix4)
+  sceneBuilder.pushTransform(mat.storage);
+  sceneBuilder.pushClipRect(stageSize);
+  sceneBuilder.addPicture(ui.Offset.zero, picture);//, stageSize);
+  sceneBuilder.pop();
+  sceneBuilder.pop();
+  return sceneBuilder.build();
 }
 
-class DemoWidget extends SingleChildRenderObjectWidget {
-  @override
-  RenderObject createRenderObject(BuildContext context) {
-    return new DemoObject();
-  }
+void onPaint(Duration timeStamp) {
+  print("---onPaint ${timeStamp}");
+  //
+  ui.PictureRecorder recorder = new ui.PictureRecorder();
+  ui.Canvas canvas = new ui.Canvas(recorder, stageSize);
+
+  //
+  ui.Paint paint = new ui.Paint();
+  paint.strokeWidth = 30.0;
+  paint.style = ui.PaintingStyle.stroke;
+  paint.color = new ui.Color.fromARGB(0xff, 0xff, 0xaa, 0x77);
+  ui.Rect drawRectSize = new ui.Rect.fromLTWH(
+      paint.strokeWidth, paint.strokeWidth,
+      stageWidth-paint.strokeWidth*2,
+      stageHeight-paint.strokeWidth*2);
+  canvas.drawRect(drawRectSize, paint);
+  ui.Picture picture = recorder.endRecording();
+
+  ui.window.render(createScene(picture));
 }
 
-class DemoObject extends RenderConstrainedBox {
-  double x = 50.0;
-  double y = 50.0;
-  sky.Image image = null;
-
-  loadImage() async {
-    if (image == null) {
-      image = await ImageLoader.load("assets/sample.jpeg");
-      this.markNeedsPaint();
-    }
-  }
-
-  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
-    ;
-  }
-  @override
-  bool hitTestSelf(Offset position) => true;
-
-  @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
-
-  @override
-  void paint(PaintingContext context, Offset offset) {
-    loadImage();
-    Paint paint = new Paint()..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
-    if (image == null) {
-      Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
-      context.canvas.drawRect(rect, paint);
-      return;
-    }
-    context.canvas.transform(new Matrix4.identity().storage);
-    context.canvas.translate(10.0, 10.0);
-    for (int i = 0; i < 3; i++) {
-      context.canvas.translate(x + 5, y + 5);
-      context.canvas.rotate(0.3);
-      context.canvas.scale(0.5, 0.5);
-      context.canvas.drawImage(image, new Offset(0.0, 0.0), paint);
-    }
-    context.canvas.transform(new Matrix4.identity().storage);
-    context.canvas.translate(10.0, 400.0);
-    for (int i = 0; i < 3; i++) {
-      context.canvas.translate(x - 5, y - 5);
-      context.canvas.rotate(-0.3);
-      context.canvas.scale(0.5, 0.5);
-      context.canvas.drawImage(image, new Offset(0.0, 0.0), paint);
-    }
-  }
-}
-
-class ImageLoader {
-  static AssetBundle getAssetBundle() => (rootBundle != null)
-      ? rootBundle
-      : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
-
-
-  static Future<sky.Image> load(String url) async {
-    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
-    Completer<sky.Image> completer = new Completer<sky.Image>();
-    void listener(ImageInfo frame, bool synchronousCall) {
-      final sky.Image image = frame.image;
-      completer.complete(image);
-      stream.removeListener(listener);
-    }
-    stream.addListener(listener);
-    return completer.future;
-  }
+void main() {
+  ui.window.onBeginFrame =  onPaint;
+  ui.window.onMetricsChanged = (){
+    ui.window.scheduleFrame();
+  };
+  ui.window.scheduleFrame();
 }
