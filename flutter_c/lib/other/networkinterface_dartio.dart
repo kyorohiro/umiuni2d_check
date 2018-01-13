@@ -1,15 +1,23 @@
-// check 2016 3/16
+// check 2018 1/13
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
 main() async {
-  runApp(new Center(child: new Text("Hello!!")));
+  runApp( new Directionality(
+      textDirection: TextDirection.ltr,
+      child: new Center (
+          child: new Text("Hello World",
+              style: new TextStyle(color:new Color.fromARGB(0xff,0xff,0xff,0xff)))
+      )
+  ));
   //
   try {
     // 2015/10/16
     // begining of crash
+    // 2016-
+    //   android not support
     print("[B ok] ${await getNetworkInterface()}");
   } catch (e) {
     print("[B error] ${e}");
