@@ -1,40 +1,35 @@
-// check 2018 1/13
-import 'package:flutter/widgets.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:async';
-import 'dart:math' as math;
-import 'dart:ui';
+// following code is checked in 2018/01/14
 
-void main() {
-  runApp(new DemoWidget()..anime());
+import 'dart:async';
+import 'dart:ui' as sky;
+
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
+main() async {
+  runApp(new DemoWidget());
 }
 
 class DemoWidget extends SingleChildRenderObjectWidget {
-  double angle = 0.0;
-  DemoRectObject o = new DemoRectObject();
-
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return o;
-  }
-
-  Future anime() async {
-    while (true) {
-      await new Future.delayed(new Duration(milliseconds: 20));
-      o.x = 100 * math.cos(math.PI * angle / 180.0) + 100.0;
-      o.y = 100 * math.sin(math.PI * angle / 180.0) + 100.0;
-      angle++;
-      o.markNeedsPaint();
-    }
+    return new DemoObject();
   }
 }
 
-class DemoRectObject extends RenderConstrainedBox {
+class DemoObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
-  DemoRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+  sky.Image image = null;
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
     ;
+  }
+  loadImage() async {
+    if (image == null) {
+      image = await ImageLoader.load("assets/sample.jpeg");
+      this.markNeedsPaint();
+    }
   }
 
   @override
@@ -42,11 +37,38 @@ class DemoRectObject extends RenderConstrainedBox {
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
+
   @override
   void paint(PaintingContext context, Offset offset) {
-    Paint p = new Paint();
-    p.color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
-    Rect r = new Rect.fromLTWH(x, y, 25.0, 25.0);
-    context.canvas.drawRect(r, p);
+    loadImage();
+    Paint paint = new Paint()..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
+    Offset point = new Offset(x, y);
+    if (image == null) {
+      Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
+      context.canvas.drawRect(rect, paint);
+    } else {
+      context.canvas.drawImage(image, point, paint);
+    }
+  }
+
+}
+
+class ImageLoader {
+  static AssetBundle getAssetBundle() => (rootBundle != null)
+      ? rootBundle
+      : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
+
+
+  static Future<sky.Image> load(String url) async {
+    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
+    Completer<sky.Image> completer = new Completer<sky.Image>();
+    void listener(ImageInfo frame, bool synchronousCall) {
+      final sky.Image image = frame.image;
+      completer.complete(image);
+      stream.removeListener(listener);
+    }
+    stream.addListener(listener);
+    return completer.future;
   }
 }
+

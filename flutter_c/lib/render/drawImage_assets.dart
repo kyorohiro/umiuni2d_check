@@ -1,4 +1,4 @@
-// following code is checked in 2016/03/16
+// following code is checked in 2018/01/14
 
 import 'dart:async';
 import 'dart:ui' as sky;
@@ -33,7 +33,7 @@ class DemoObject extends RenderConstrainedBox {
   }
 
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
@@ -42,7 +42,7 @@ class DemoObject extends RenderConstrainedBox {
   void paint(PaintingContext context, Offset offset) {
     loadImage();
     Paint paint = new Paint()..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
-    Point point = new Point(x, y);
+    Offset point = new Offset(x, y);
     if (image == null) {
       Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
       context.canvas.drawRect(rect, paint);
@@ -62,7 +62,7 @@ class ImageLoader {
   static Future<sky.Image> load(String url) async {
     ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
     Completer<sky.Image> completer = new Completer<sky.Image>();
-    void listener(ImageInfo frame) {
+    void listener(ImageInfo frame, bool synchronousCall) {
       final sky.Image image = frame.image;
       completer.complete(image);
       stream.removeListener(listener);
