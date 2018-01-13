@@ -3,10 +3,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:test/test.dart' as test;
-import 'dart:ui';
 
 main() async {
-  runApp(new DemoWidget());
+  runApp( new Directionality(
+      textDirection: TextDirection.ltr,
+      child: new Center (
+          child: new Text("Hello World",
+              style: new TextStyle(color:new Color.fromARGB(0xff,0xff,0xff,0xff)))
+      )
+  ));
   //await new Future.delayed(new Duration(seconds: 1));
   try {
     test.group("group", () {
@@ -17,31 +22,4 @@ main() async {
   } catch (e, t) {
     print("${e} ${t}");
   }
-}
-
-class DemoWidget extends SingleChildRenderObjectWidget {
-  double angle = 0.0;
-  DemoRectObject o = new DemoRectObject();
-
-  @override
-  RenderObject createRenderObject(BuildContext context) {
-    return o;
-  }
-}
-
-class DemoRectObject extends RenderConstrainedBox {
-  double x = 50.0;
-  double y = 50.0;
-  DemoRectObject() : super(additionalConstraints: const BoxConstraints.expand()) {
-    ;
-  }
-
-  @override
-  bool hitTestSelf(Offset position) => true;
-
-  @override
-  void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
-
-  @override
-  void paint(PaintingContext context, Offset offset) {}
 }
