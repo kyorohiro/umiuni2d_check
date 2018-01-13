@@ -1,4 +1,4 @@
-// following code is checked in 2016/03/16
+// check 2018 1/13
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';

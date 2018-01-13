@@ -1,4 +1,4 @@
-// following code is checked in 2016/03/16
+// check 2018 1/13
 
 import 'dart:async';
 import 'dart:ui' as sky;
@@ -34,7 +34,7 @@ class DemoObject extends RenderConstrainedBox {
     ;
   }
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
@@ -48,21 +48,21 @@ class DemoObject extends RenderConstrainedBox {
       context.canvas.drawRect(rect, paint);
       return;
     }
-    context.canvas.setMatrix(new Matrix4.identity().storage);
+    context.canvas.transform(new Matrix4.identity().storage);
     context.canvas.translate(10.0, 10.0);
     for (int i = 0; i < 3; i++) {
       context.canvas.translate(x + 5, y + 5);
       context.canvas.rotate(0.3);
       context.canvas.scale(0.5, 0.5);
-      context.canvas.drawImage(image, new Point(0.0, 0.0), paint);
+      context.canvas.drawImage(image, new Offset(0.0, 0.0), paint);
     }
-    context.canvas.setMatrix(new Matrix4.identity().storage);
+    context.canvas.transform(new Matrix4.identity().storage);
     context.canvas.translate(10.0, 400.0);
     for (int i = 0; i < 3; i++) {
       context.canvas.translate(x - 5, y - 5);
       context.canvas.rotate(-0.3);
       context.canvas.scale(0.5, 0.5);
-      context.canvas.drawImage(image, new Point(0.0, 0.0), paint);
+      context.canvas.drawImage(image, new Offset(0.0, 0.0), paint);
     }
   }
 }
@@ -76,7 +76,7 @@ class ImageLoader {
   static Future<sky.Image> load(String url) async {
     ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
     Completer<sky.Image> completer = new Completer<sky.Image>();
-    void listener(ImageInfo frame) {
+    void listener(ImageInfo frame, bool synchronousCall) {
       final sky.Image image = frame.image;
       completer.complete(image);
       stream.removeListener(listener);
