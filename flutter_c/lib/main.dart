@@ -1,11 +1,12 @@
-// following code is checked in 2018/01/14
+// following code is checked in 2016/03/16
 
-import 'dart:async';
-import 'dart:ui' as sky;
-
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'dart:io' as io;
+import 'dart:ui' as sky;
+import 'dart:typed_data';
 
 main() async {
   runApp(new DemoWidget());
@@ -22,14 +23,16 @@ class DemoObject extends RenderConstrainedBox {
   double x = 50.0;
   double y = 50.0;
   sky.Image image = null;
-  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
-    ;
-  }
+
   loadImage() async {
     if (image == null) {
-      image = await ImageLoader.load("assets/sample.jpeg");
+      image = await ImageLoader.load("https://avatars0.githubusercontent.com/u/1310669?v=3&s=460");
       this.markNeedsPaint();
     }
+  }
+
+  DemoObject() : super(additionalConstraints: const BoxConstraints.expand()) {
+    ;
   }
 
   @override
@@ -41,7 +44,8 @@ class DemoObject extends RenderConstrainedBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     loadImage();
-    Paint paint = new Paint()..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
+    Paint paint = new Paint()
+      ..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
     Offset point = new Offset(x, y);
     if (image == null) {
       Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
@@ -50,25 +54,35 @@ class DemoObject extends RenderConstrainedBox {
       context.canvas.drawImage(image, point, paint);
     }
   }
-
 }
 
 class ImageLoader {
-  static AssetBundle getAssetBundle() => (rootBundle != null)
-      ? rootBundle
-      : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
-
-
   static Future<sky.Image> load(String url) async {
-    ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
-    Completer<sky.Image> completer = new Completer<sky.Image>();
-    void listener(ImageInfo frame, bool synchronousCall) {
-      final sky.Image image = frame.image;
-      completer.complete(image);
-      stream.removeListener(listener);
+    io.HttpClient client = new io.HttpClient();
+    io.HttpClientRequest request = await client.getUrl(Uri.parse(url));
+    io.HttpClientResponse response = await request.close();
+
+
+    if (response.statusCode != 200) {
+      throw {"message": "failed to load ${url}"};
+    } else {
+      //Uint8List bytes = new Uint8List(await response.length);
+      int i = 0;
+      List bytesSrc = <int>[];
+      await for (List<int> d in response) {
+        bytesSrc.addAll(d);
+      }
+      Uint8List bytes = new Uint8List.fromList(bytesSrc);
+      // normally use following
+      // import 'package:flutter/services.dart';
+      // Future<ui.Image> decodeImageFromDataPipe(MojoDataPipeConsumer consumerHandle)
+      // Future<ui.Image> decodeImageFromList(Uint8List list) {
+      Completer<sky.Image> completer = new Completer();
+      sky.decodeImageFromList(bytes, (sky.Image image) {
+        completer.complete(image);
+      });
+      return completer.future;
     }
-    stream.addListener(listener);
-    return completer.future;
   }
 }
 

@@ -4,8 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter/http.dart' as http;
+import 'dart:io' as io;
 import 'dart:ui' as sky;
+import 'dart:typed_data';
 
 main() async {
   runApp(new DemoWidget());
@@ -35,7 +36,7 @@ class DemoObject extends RenderConstrainedBox {
   }
 
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
@@ -45,7 +46,7 @@ class DemoObject extends RenderConstrainedBox {
     loadImage();
     Paint paint = new Paint()
       ..color = new Color.fromARGB(0xff, 0xff, 0xff, 0xff);
-    Point point = new Point(x, y);
+    Offset point = new Offset(x, y);
     if (image == null) {
       Rect rect = new Rect.fromLTWH(x, y, 50.0, 50.0);
       context.canvas.drawRect(rect, paint);
@@ -57,16 +58,27 @@ class DemoObject extends RenderConstrainedBox {
 
 class ImageLoader {
   static Future<sky.Image> load(String url) async {
-    http.Response response = await http.get(url);
-    if (response.body == null) {
-      throw {"message":"failed to load ${url}"};
+    io.HttpClient client = new io.HttpClient();
+    io.HttpClientRequest request = await client.getUrl(Uri.parse(url));
+    io.HttpClientResponse response = await request.close();
+
+
+    if (response.statusCode != 200) {
+      throw {"message": "failed to load ${url}"};
     } else {
+      //Uint8List bytes = new Uint8List(await response.length);
+      int i = 0;
+      List bytesSrc = <int>[];
+      await for (List<int> d in response) {
+        bytesSrc.addAll(d);
+      }
+      Uint8List bytes = new Uint8List.fromList(bytesSrc);
       // normally use following
       // import 'package:flutter/services.dart';
       // Future<ui.Image> decodeImageFromDataPipe(MojoDataPipeConsumer consumerHandle)
       // Future<ui.Image> decodeImageFromList(Uint8List list) {
       Completer<sky.Image> completer = new Completer();
-      sky.decodeImageFromList(response.bodyBytes,(sky.Image image) {
+      sky.decodeImageFromList(bytes, (sky.Image image) {
         completer.complete(image);
       });
       return completer.future;
