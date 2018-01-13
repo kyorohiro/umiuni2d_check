@@ -1,4 +1,4 @@
-// following code is checked in 2016/05/08
+// following code is checked in 2018/01/13
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,10 +9,10 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:math' as math;
 
-sky.Image img = null;
+
 main() async {
   // "assets/icon.jpeg" is error 2015/12/13 's flutter, when draw image
-  img = await ImageLoader.load("assets/sample.png");
+
   runApp(new DrawVertexsWidget());
 }
 
@@ -24,10 +24,11 @@ class DrawVertexsWidget extends SingleChildRenderObjectWidget {
 }
 
 class DrawVertexsObject extends RenderConstrainedBox {
+  sky.Image img = null;
   double angle = 0.0;
   DrawVertexsObject()
       : super(additionalConstraints: const BoxConstraints.expand()) {
-    ;
+    loadImage();
   }
 
   void anime() {
@@ -38,16 +39,26 @@ class DrawVertexsObject extends RenderConstrainedBox {
     });
   }
 
+  loadImage() async {
+    if (img == null) {
+      img = await ImageLoader.load("assets/sample.jpeg");
+      this.markNeedsPaint();
+    }
+  }
+
   @override
-  bool hitTestSelf(Point position) => true;
+  bool hitTestSelf(Offset position) => true;
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {}
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    if(img == null) {
+      return;
+    }
     context.canvas.scale(4.0, 4.0);
-    context.canvas.translate(80.0, 80.0);
+    context.canvas.translate(50.0, 80.0);
     Matrix4 mat = new Matrix4.identity();
     mat.rotateY(math.PI / 2.0 + angle);
     mat.rotateX(angle);
@@ -75,17 +86,17 @@ class DrawVertexsObject extends RenderConstrainedBox {
     if (normal.z < 0) {
       return;
     }
-    List<Point> vertices = [
-      new Point(vec1.x, vec1.y),
-      new Point(vec2.x, vec2.y),
-      new Point(vec3.x, vec3.y),
-      new Point(vec4.x, vec4.y)
+    List<Offset> verticesSrc = [
+      new Offset(vec1.x, vec1.y),
+      new Offset(vec2.x, vec2.y),
+      new Offset(vec3.x, vec3.y),
+      new Offset(vec4.x, vec4.y)
     ];
-    List<Point> textureCoordinates = [
-      new Point(0.0, 0.0),
-      new Point(0.0, 1.0 * img.height),
-      new Point(1.0 * img.width, 1.0 * img.height),
-      new Point(1.0 * img.width, 0.0)
+    List<Offset> textureCoordinates = [
+      new Offset(0.0, 0.0),
+      new Offset(0.0, 1.0 * img.height),
+      new Offset(1.0 * img.width, 1.0 * img.height),
+      new Offset(1.0 * img.width, 0.0)
     ];
     List<Color> colors = [
       const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
@@ -93,15 +104,21 @@ class DrawVertexsObject extends RenderConstrainedBox {
       const Color.fromARGB(0xaa, 0xff, 0xff, 0xff),
       const Color.fromARGB(0xaa, 0xff, 0xff, 0xff)
     ];
-    sky.TransferMode transferMode = sky.TransferMode.color;
     sky.TileMode tmx = sky.TileMode.clamp;
     sky.TileMode tmy = sky.TileMode.clamp;
     Float64List matrix4 = new Matrix4.identity().storage;
     sky.ImageShader imgShader = new sky.ImageShader(img, tmx, tmy, matrix4);
     paint.shader = imgShader;
     List<int> indicies = [0, 1, 2, 3];
-    context.canvas.drawVertices(vertexMode, vertices, textureCoordinates,
-        colors, transferMode, indicies, paint);
+    sky.Vertices vertices = new sky.Vertices(
+        sky.VertexMode.triangleFan,
+        verticesSrc,
+        colors: colors,
+        textureCoordinates: textureCoordinates,
+        indices: indicies
+    );
+
+    context.canvas.drawVertices(vertices, BlendMode.color, paint);
   }
 }
 
@@ -110,11 +127,10 @@ class ImageLoader {
       ? rootBundle
       : new NetworkAssetBundle(new Uri.directory(Uri.base.origin));
 
-
   static Future<sky.Image> load(String url) async {
     ImageStream stream = new AssetImage(url, bundle: getAssetBundle()).resolve(ImageConfiguration.empty);
     Completer<sky.Image> completer = new Completer<sky.Image>();
-    void listener(ImageInfo frame) {
+    void listener(ImageInfo frame, bool synchronousCall) {
       final sky.Image image = frame.image;
       completer.complete(image);
       stream.removeListener(listener);
